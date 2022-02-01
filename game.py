@@ -20,6 +20,9 @@ class Game:
         self.away_goals = a_goal
         self.played = played
 
+    def __str__(self):
+        return f"{self.home_team} - {self.away_team} {self.home_goals}-{self.away_goals}"
+
     def get_result(self):
         if not self.played:
             return GameResult.CANCELLED
