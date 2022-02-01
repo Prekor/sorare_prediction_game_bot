@@ -5,7 +5,7 @@ from game import Game
 
 class GameParser:
     def __init__(self):
-        self.game_pattern = r"(?P<h_team>.*)(vs|\-|\–)(?P<a_team>.*)"
+        self.game_pattern = r"(?P<h_team>[A-Za-z].*)\W*(vs|\-|\–)\W*(?P<a_team>[A-Za-z].*)"
 
     def get_game(self, line) -> Game or None:
         game_match = re.search(self.game_pattern, line, re.IGNORECASE)

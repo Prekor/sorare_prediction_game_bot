@@ -7,8 +7,9 @@ class GameWithScoreParser:
     def __init__(self):
         self.score_pattern = r"(\d+)\W*[:\-\–\_\;\/x\~]\W*(\d+)"
 
-    def get_game_with_score(self, line: str, games: list[Game]) -> Game:
+    def get_game_with_score(self, line: str, games: list[Game]) -> (Game, Game):
         game_with_score = None
+        game_match = None
         for game in games:
             score_line = self.find_teams_in_line(game.home_team, game.away_team, line)
             if score_line is None:
@@ -17,9 +18,13 @@ class GameWithScoreParser:
                 score = self.get_score(score_line)
                 assert score is not None
                 game_with_score = Game(game.home_team, game.away_team, score[0], score[1])
+                game_match = game
                 break
         assert game_with_score is not None
-        return game_with_score
+        assert game_match is not None
+        # TODO handle raise exception when game doesn't match
+        # TODO send template of the game
+        return game_with_score, game_match
 
     @staticmethod
     def find_team_in_line(team: str, line: str):

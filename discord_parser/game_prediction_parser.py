@@ -11,13 +11,9 @@ class GamePredictionParser(GameWithScoreParser):
         self.game: Game or None = None
 
     def get_game_prediction(self, line: str, games: list[Game]) -> GamePrediction:
-        game_with_score = self.get_game_with_score(line, games)
+        game_with_score, self.game = self.get_game_with_score(line, games)
         assert game_with_score is not None
-        for game in games:
-            if game == game_with_score:
-                assert game is not None
-                self.game = game
-                break
+        assert self.game is not None
         return GamePrediction(
             self.game.home_team,
             self.game.away_team,

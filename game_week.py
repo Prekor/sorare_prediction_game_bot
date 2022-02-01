@@ -10,9 +10,9 @@ class GameWeek:
         self.games = games
 
     def __str__(self):
-        reply_value = f"**GameWeek #{self.game_week_number}**\n"
+        message = f"**GameWeek #{self.game_week_number}**\n"
         for game in self.games:
-            reply_value += f"{game.home_team} - {game.away_team}\n"
-        reply_value += "**Deadline CET Time**\n"
-        reply_value += self.deadline.strftime("%c")
-        return reply_value
+            message += f"{game.home_team} - {game.away_team}\n"
+        message += "**Deadline CET Time**\n"
+        message += self.deadline.strftime("%c")
+        return message

@@ -19,10 +19,6 @@ class Game:
         self.home_goals = h_goal
         self.away_goals = a_goal
 
-    def set_score(self, h_goals: int, a_goals: int):
-        self.home_goals = h_goals
-        self.away_goals = a_goals
-
     def get_result(self):
         if self.home_goals > self.away_goals:
             return GameResult.WIN
@@ -30,7 +26,3 @@ class Game:
             return GameResult.LOSS
         else:
             return GameResult.DRAW
-
-    def __eq__(self, other):
-        assert isinstance(other, Game)
-        return self.home_team == other.home_team and self.away_team == other.away_team

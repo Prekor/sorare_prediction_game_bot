@@ -16,17 +16,9 @@ class GameWeekPrediction:
 
     def get_score(self) -> int:
         score = 0
-        has_multiple_bank_games = self.has_multiple_bank_games()
         for game_prediction in self.game_predictions:
-            score += game_prediction.get_score(has_multiple_bank_games)
+            score += game_prediction.get_score()
         return score
-
-    def has_multiple_bank_games(self) -> bool:
-        bank = 0
-        for game_prediction in self.game_predictions:
-            if game_prediction.bank:
-                bank += 1
-        return bank > 1
 
     def get_total_goals_diff(self) -> int:
         total_goals_diff = 0

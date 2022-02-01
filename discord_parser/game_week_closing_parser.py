@@ -5,22 +5,18 @@ from discord_parser.game_with_score_parser import GameWithScoreParser
 
 
 class GameWeekClosingParser(DiscordParser, GameWithScoreParser):
-    def __init__(self, ctx):
-        DiscordParser.__init__(self, ctx)
+    def __init__(self, ctx, message):
+        DiscordParser.__init__(self, ctx, message)
         GameWithScoreParser.__init__(self)
 
-    @staticmethod
-    def set_game_score(game_with_score: Game, games: list[Game]) -> bool:
-        for game in games:
-            if game == game_with_score:
-                game.home_goals = game_with_score.home_goals
-                game.away_goals = game_with_score.away_goals
-                return True
-        return False
-
     def set_games_score(self, games: list[Game]) -> bool:
-        for line in self.get_message_without_command():
-            game_with_score = self.get_game_with_score(line, games)
+        # TODO : assert self.ctx.message.created_at >= game_week.deadline
+        for line in self.message:
+            game_with_score, game_match = self.get_game_with_score(line, games)
             assert game_with_score is not None
-            assert self.set_game_score(game_with_score, games)
+            assert game_match is not None
+            # TODO handle raise exception when game doesn't match
+            # TODO send template of the game
+            game_match.home_goals = game_with_score.home_goals
+            game_match.away_goals = game_with_score.away_goals
         return True

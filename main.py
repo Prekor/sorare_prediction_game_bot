@@ -17,11 +17,11 @@ class SorareDiscordPredictionGameBot(commands.Bot):
         @self.command(name='init_gw')
         async def init_game_week(ctx, *, args):
             try:
-                game_week = GameWeekParser(ctx).get_game_week()
+                game_week = GameWeekParser(ctx, args).get_game_week()
             except PredictionException as err:
                 embed = discord.Embed(title="Games submission failed", color=discord.Color.red())
                 embed.add_field(name="Error Message", value=str(err), inline=False)
-                # TODO : Add a template of correct game week in message to be sent
+                # TODO : Add a template of correct game week submission in message to be sent
             else:
                 embed = discord.Embed(title="Games submission successful", color=discord.Color.green())
                 embed.add_field(name="Registered Game Week", value=str(game_week), inline=False)
@@ -34,23 +34,26 @@ class SorareDiscordPredictionGameBot(commands.Bot):
             assert(self.game is not None)
             assert(self.game.game_week is not None)
             try:
-                prediction = GameWeekPredictionParser(ctx).get_game_week_prediction(self.game.game_week)
+                prediction = GameWeekPredictionParser(ctx, args).get_game_week_prediction(self.game.game_week)
             except PredictionException as err:
                 print(err)
-                # await ctx.args.add_reaction('❎')
+                await ctx.message.add_reaction('❎')
             else:
+                # TODO : save predictions using pickle
                 self.game.add_prediction(prediction)
-                # await ctx.args.add_reaction('✅')
+                await ctx.message.add_reaction('✅')
 
         @self.command(name='close_gw')
         async def close_game_week(ctx, *, args):
             assert self.game is not None
             assert self.game.game_week is not None
             try:
-                GameWeekClosingParser(ctx).set_games_score(self.game.games)
+                GameWeekClosingParser(ctx, args).set_games_score(self.game.game_week.games)
             except PredictionException as err:
-                print(err)
+                embed = discord.Embed(title="Game closure failed", color=discord.Color.red())
+                embed.add_field(name="Error Message", value=str(err), inline=False)
             else:
+                await ctx.message.add_reaction('✅')
                 winner = self.game.get_winner()
                 embed = discord.Embed(title="Game Result", color=discord.Color.green())
                 embed.add_field(
@@ -58,8 +61,10 @@ class SorareDiscordPredictionGameBot(commands.Bot):
                     value=winner.name,
                     inline=False
                 )
-                #     TODO : Verify that users still exist on the server
-                #     TODO : save game using pickle
+                # TODO: Verify that users still exist on the server
+                # TODO: save closed game and predictions using pickle
+                # TODO: Send log file
+            await ctx.send(embed=embed)
 
 
 def main():

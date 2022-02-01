@@ -9,19 +9,18 @@ from discord_parser.game_parser import GameParser
 
 
 class GameWeekParser(DiscordParser, GameParser):
+
     __NUMBER_OF_GAMES = 5
-    def __init__(self, ctx):
-        DiscordParser.__init__(self, ctx)
+    __DEADLINE_FORMAT = "%d/%m/%Y - %H:%M"
+    __GW_NUMBER_PATTERN = r"(\#)(?P<gw_number>\d+)"
+
+    def __init__(self, ctx, message):
+        DiscordParser.__init__(self, ctx, message)
         GameParser.__init__(self)
-        self.game_deadline_pattern = r"(?P<day>\d{2})(\/)(?P<month>\d{2})(\/)(?P<year>\d{4})(\s\-\s)(?P<hour>\d{2})(" \
-                                     r"\:)(?P<minute>\d{2})"
-        self.gw_number_pattern = r"(\#)(?P<gw_number>\d+)"
 
     def get_games(self) -> list[Game]:
         games: list[Game] = []
-        for line in self.get_message_without_command():
-            if re.search(self.game_deadline_pattern, line, re.IGNORECASE):
-                continue
+        for line in self.message:
             game = self.get_game(line)
             if game:
                 games.append(game)
@@ -31,9 +30,9 @@ class GameWeekParser(DiscordParser, GameParser):
 
     def get_game_week_number(self) -> int:
         game_week_number = 0
-        for line in self.get_message_without_command():
+        for line in self.message:
             if game_week_number == 0:
-                gw_number_match = re.search(self.gw_number_pattern, line, re.IGNORECASE)
+                gw_number_match = re.search(self.__GW_NUMBER_PATTERN, line, re.IGNORECASE)
                 if gw_number_match:
                     game_week_number = gw_number_match.group("gw_number")
                     return int(game_week_number)
@@ -41,19 +40,15 @@ class GameWeekParser(DiscordParser, GameParser):
 
     def get_deadline(self) -> datetime:
         submit_deadline = datetime.datetime.min
-        for line in self.get_message_without_command():
+        for line in self.message:
             if submit_deadline == datetime.datetime.min:
-                game_deadline_match = re.search(self.game_deadline_pattern, line, re.IGNORECASE)
-                if game_deadline_match:
-                    submit_deadline = datetime.datetime(
-                        year=int(game_deadline_match.group("year")),
-                        month=int(game_deadline_match.group("month")),
-                        day=int(game_deadline_match.group("day")),
-                        hour=int(game_deadline_match.group("hour")),
-                        minute=int(game_deadline_match.group("minute"))
-                    )
+                try:
+                    submit_deadline = datetime.datetime.strptime(line, self.__DEADLINE_FORMAT)
+                except ValueError:
+                    pass
+                else:
                     return submit_deadline
-        raise PredictionException("Submit prediction deadline is missing")
+        raise PredictionException("Deadline for prediction submission is missing")
 
     def get_game_week(self) -> GameWeek:
         game_week_number = self.get_game_week_number()
