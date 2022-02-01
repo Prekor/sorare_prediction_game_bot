@@ -34,9 +34,6 @@ class Game:
         self.away_team = a_team
         self.home_goals = h_goal
         self.away_goals = a_goal
-        self.global_goal_avg = h_goal + a_goal
-        self.home_goal_avg = h_goal
-        self.result = GameResult.get_result(self.home_goals, self.away_goals)
 
     @staticmethod
     def filter_team_name(team_name: str) -> str:

@@ -1,6 +1,6 @@
 import re
 import datetime
-from exception import PredictionException
+from prediction_exception import PredictionException
 from game import Game
 
 
@@ -18,6 +18,7 @@ class GameWeek:
         reply_value += self.end_date_time.strftime("%c")
         return reply_value
 
+    # TODO : replace by staticmethod create_from_message
     def init_game_week(self, message):
         game_date_pattern = r"(?P<day>\d{2})(\/)(?P<month>\d{2})(\/)(?P<year>\d{4})(\s\-\s)" \
                             r"(?P<hour>\d{2})(\:)(?P<minute>\d{2})"
