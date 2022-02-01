@@ -11,8 +11,8 @@ class SorarePredictionGame:
     def add_prediction(self, prediction: GameWeekPrediction):
         self.predictions[prediction.manager] = prediction
 
-    def get_winner(self) -> Manager:
+    def get_winner(self) -> GameWeekPrediction:
         predictions_list = list(self.predictions.values())
         assert len(predictions_list) != 0, "There is no submitted prediction"
         predictions_list.sort()
-        return predictions_list[0].manager
+        return predictions_list[-1]
