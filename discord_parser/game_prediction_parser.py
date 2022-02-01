@@ -12,8 +12,8 @@ class GamePredictionParser(GameWithScoreParser):
 
     def get_game_prediction(self, line: str, games: list[Game]) -> GamePrediction:
         game_with_score, self.game = self.get_game_with_score(line, games)
-        assert game_with_score is not None
-        assert self.game is not None
+        assert game_with_score is not None, f"No valid score found in:\n{line}"
+        assert self.game is not None, f"There is no matching game in the game week for:\n{line}"
         return GamePrediction(
             self.game.home_team,
             self.game.away_team,

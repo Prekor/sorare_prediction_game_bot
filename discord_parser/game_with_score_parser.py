@@ -4,26 +4,30 @@ from game import Game
 
 
 class GameWithScoreParser:
-    def __init__(self):
-        self.score_pattern = r"(\d+)\W*[:\-\–\_\;\/x\~]\W*(\d+)"
 
-    def get_game_with_score(self, line: str, games: list[Game]) -> (Game, Game):
+    __SCORE_PATTERN = r"(\d+)\W*[:\-\–\_\;\/x\~]\W*(\d+)"
+    __GAME_CANCELLED = r"CANCELLED"
+
+    @staticmethod
+    def get_game_with_score(line: str, games: list[Game]) -> (Game, Game):
         game_with_score = None
         game_match = None
         for game in games:
-            score_line = self.find_teams_in_line(game.home_team, game.away_team, line)
+            score_line = GameWithScoreParser.find_teams_in_line(game.home_team, game.away_team, line)
             if score_line is None:
                 continue
+            elif GameWithScoreParser.__GAME_CANCELLED.lower() in line.lower():
+                game_with_score = Game(game.home_team, game.away_team, played=False)
+                game_match = game
+                break
             else:
-                score = self.get_score(score_line)
-                assert score is not None
+                score = GameWithScoreParser.get_score(score_line)
+                assert score is not None, f"No valid score found in:\n{line}"
                 game_with_score = Game(game.home_team, game.away_team, score[0], score[1])
                 game_match = game
                 break
-        assert game_with_score is not None
-        assert game_match is not None
-        # TODO handle raise exception when game doesn't match
-        # TODO send template of the game
+        assert game_with_score is not None, f"No valid score found in:\n{line}"
+        assert game_match is not None, f"There is no matching game in the game week for:\n{line}"
         return game_with_score, game_match
 
     @staticmethod
@@ -58,13 +62,14 @@ class GameWithScoreParser:
             return None
         return GameWithScoreParser.find_team_in_line(a_team, remaining_line)
 
-    def get_score(self, line: str) -> (int, int):
+    @staticmethod
+    def get_score(line: str) -> (int, int):
         """"
          Searches score pattern in the line
          :return home goals and away goals if succeeds
          :return None otherwise
         """
-        match_pattern = re.search(self.score_pattern, line, re.IGNORECASE)
+        match_pattern = re.search(GameWithScoreParser.__SCORE_PATTERN, line, re.IGNORECASE)
         if match_pattern is None:
             return None
         else:

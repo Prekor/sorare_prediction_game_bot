@@ -33,7 +33,9 @@ class GameWeekPrediction:
         return abs(home_goals_diff)
 
     def __eq__(self, other):
-        assert isinstance(other, GameWeekPrediction)
+        assert isinstance(other, GameWeekPrediction), (
+            f"Can't compare {self.__class__.__name__} with {type(other).__name__}"
+        )
         return(
             self.get_score() == other.get_score() and
             self.get_total_goals_diff() == other.get_total_goals_diff() and
@@ -42,7 +44,9 @@ class GameWeekPrediction:
         )
 
     def __lt__(self, other):
-        assert isinstance(other, GameWeekPrediction)
+        assert isinstance(other, GameWeekPrediction), (
+            f"Can't compare {self.__class__.__name__} with {type(other).__name__}"
+        )
         if self.get_score() != other.get_score():
             return self.get_score() < other.get_score()
         elif self.get_total_goals_diff() != other.get_total_goals_diff():

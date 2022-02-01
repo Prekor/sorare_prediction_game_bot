@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from game import Game
+from game import Game, GameResult
 
 
 class GamePrediction(Game):
@@ -15,6 +15,8 @@ class GamePrediction(Game):
         self.game = game
 
     def get_score(self) -> int:
+        if self.game.get_result() == GameResult.CANCELLED:
+            return 0
         correct_score = self.home_goals == self.game.home_goals and self.away_goals == self.game.away_goals
         correct_result = self.get_result() == self.game.get_result()
         if correct_score:

@@ -13,6 +13,6 @@ class SorarePredictionGame:
 
     def get_winner(self) -> Manager:
         predictions_list = list(self.predictions.values())
-        assert(len(predictions_list) != 0)
+        assert len(predictions_list) != 0, "There is no submitted prediction"
         predictions_list.sort()
         return predictions_list[0].manager

@@ -11,41 +11,23 @@ from prediction_exception import PredictionException
 
 
 class GameWeekPredictionParser(DiscordParser):
+
+    __BANK_GAME_COUNT = 1
+
     def __init__(self, ctx, message):
         super().__init__(ctx, message)
         self.predictions: list[GamePrediction] = []
         self.manager: Manager = ManagerParser(ctx, message).get_manager()
 
     def get_game_week_prediction(self, game_week: GameWeek) -> GameWeekPrediction:
-        assert self.ctx.message.created_at < game_week.deadline
-        for line in self.message:
-            try:
-                prediction = GamePredictionParser().get_game_prediction(line, game_week.games)
-            except PredictionException as err:
-                # TODO: This should be a warning and not an error
-                print(err)
-            else:
-                self.predictions.append(prediction)
-        assert len(self.predictions) == len(game_week.games)
-        assert not self.has_multiple_bank_games()
-        assert not self.has_no_bank_game()
-        return GameWeekPrediction(self.ctx.message.created_at, self.predictions, self.manager)
-
-    def has_multiple_bank_games(self) -> bool:
         banked_games = 0
-        if not self.predictions:
-            return False
-        for prediction in self.predictions:
-            if prediction.bank:
-                banked_games += 1
-        if banked_games > 1:
-            return True
-        return False
-
-    def has_no_bank_game(self) -> bool:
-        if not self.predictions:
-            return True
-        for prediction in self.predictions:
-            if prediction.bank:
-                return False
-        return True
+        assert self.ctx.message.created_at < game_week.deadline, (
+            f"Submission deadline {game_week.deadline.strftime('%c')} has passed"
+        )
+        for line in self.message:
+            prediction = GamePredictionParser().get_game_prediction(line, game_week.games)
+            banked_games += int(prediction.bank)
+            self.predictions.append(prediction)
+        assert len(self.predictions) == len(game_week.games), f"There are not {len(game_week.games)} valid games"
+        assert banked_games == self.__BANK_GAME_COUNT, f"There are {banked_games} bank game in the prediction"
+        return GameWeekPrediction(self.ctx.message.created_at, self.predictions, self.manager)
