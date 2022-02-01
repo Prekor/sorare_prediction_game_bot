@@ -14,18 +14,17 @@ class GameWeekPredictionParser(DiscordParser):
     def __init__(self, ctx):
         super().__init__(ctx)
         self.predictions: list[GamePrediction] = []
-        self.manager: Manager = ManagerParser(ctx).parse()
+        self.manager: Manager = ManagerParser(ctx).get_manager()
 
-    def parse(self, game_week: GameWeek) -> GameWeekPrediction:
-        if self.ctx.message.created_at > game_week.deadline:
-            err = "Deadline has passed" + str(game_week)
-            raise PredictionException(err)
+    def get_game_week_prediction(self, game_week: GameWeek) -> GameWeekPrediction:
+        assert self.ctx.message.created_at < game_week.deadline
         for line in self.get_message_without_command():
             try:
-                prediction = GamePredictionParser(self.ctx).parse(line, game_week)
+                prediction = GamePredictionParser().get_game_prediction(line, game_week.games)
             except PredictionException as err:
-                # TODO: raise DiscordParseException instead of PredictionException
-                pass
+                # TODO: This should be a warning and not an error
+                print(err)
             else:
                 self.predictions.append(prediction)
+        assert len(self.predictions) == len(game_week.games)
         return GameWeekPrediction(self.ctx.message.created_at, self.predictions, self.manager)

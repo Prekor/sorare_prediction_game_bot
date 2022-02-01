@@ -1,20 +1,13 @@
-from prediction_exception import PredictionException
-from discord_parser.game_week_parser import GameWeekParser
+# -*- coding: utf-8 -*-
+from datetime import datetime
+from game import Game
+
 
 class GameWeek:
-    def __init__(self, game_week_number, deadline, games):
+    def __init__(self, game_week_number: int, deadline: datetime, games: list[Game]):
         self.game_week_number = game_week_number
         self.deadline = deadline
         self.games = games
-
-    def load_final_scores(self, ctx):
-        game_week_parser = GameWeekParser(ctx)
-        games_score = game_week_parser.get_games_score()
-        for game in self.games:
-            if game in games_score:
-                game.update_score(games_score.game.home_goals, games_score.game.away_goals)
-            else :
-                raise PredictionException("There are not 5 valid games")
 
     def __str__(self):
         reply_value = f"**GameWeek #{self.game_week_number}**\n"

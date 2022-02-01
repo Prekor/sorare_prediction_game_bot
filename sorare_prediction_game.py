@@ -3,7 +3,6 @@ from game_week import GameWeek
 from game_week_prediction import GameWeekPrediction
 
 
-
 class SorarePredictionGame:
     def __init__(self, game_week: GameWeek):
         self.predictions: dict[Manager, GameWeekPrediction] = {}
@@ -13,8 +12,6 @@ class SorarePredictionGame:
         self.predictions[prediction.manager] = prediction
 
     def get_winner(self) -> Manager:
-        for manager in self.predictions:
-            self.predictions[manager].calculate_results(self.game_week)
         predictions_list = list(self.predictions.values())
         assert(len(predictions_list) != 0)
         predictions_list.sort()

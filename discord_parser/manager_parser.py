@@ -7,5 +7,5 @@ class ManagerParser(DiscordParser):
     def __init__(self, ctx):
         super().__init__(ctx)
 
-    def parse(self):
+    def get_manager(self):
         return Manager(self.ctx.author)
