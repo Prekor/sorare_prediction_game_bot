@@ -15,7 +15,7 @@ class SorareDiscordPredictionGameBot(commands.Bot):
         # TODO: load last game file instead
         self.game: SorarePredictionGame or None = None
 
-        # TODO: @commands.has_role('side game manager')
+        @commands.has_role('Side Game Manager')
         @self.command(name='init_gw')
         async def init_game_week(ctx, *, args):
             try:
@@ -46,6 +46,7 @@ class SorareDiscordPredictionGameBot(commands.Bot):
                 self.game.add_prediction(prediction)
                 await ctx.message.add_reaction('✅')
 
+        @commands.has_role('Side Game Manager')
         @self.command(name='close_gw')
         async def close_game_week(ctx, *, args):
             try:
@@ -59,7 +60,6 @@ class SorareDiscordPredictionGameBot(commands.Bot):
                 embed = discord.Embed(title="Game closure failed", color=discord.Color.red())
                 embed.add_field(name="Error Message", value=str(err), inline=False)
             else:
-                await ctx.message.add_reaction('✅')
                 await ctx.send(f"{winning_predictions.manager.author.mention}")
                 embed = discord.Embed(
                     title=f"Game #{self.game.game_week.game_week_number} result",
