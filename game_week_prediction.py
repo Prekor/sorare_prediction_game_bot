@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from __future__ import annotations
 from functools import total_ordering
 from datetime import datetime
