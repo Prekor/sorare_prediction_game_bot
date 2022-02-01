@@ -14,5 +14,5 @@ class SorarePredictionGame:
     def get_winner(self) -> GameWeekPrediction:
         predictions_list = list(self.predictions.values())
         assert len(predictions_list) != 0, "There is no submitted prediction"
-        predictions_list.sort()
-        return predictions_list[-1]
+        predictions_list.sort(reverse=True)
+        return predictions_list[0]
