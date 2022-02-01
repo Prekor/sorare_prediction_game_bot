@@ -12,4 +12,7 @@ class SorarePredictionGame:
         self.predictions[prediction.manager] = prediction
 
     def get_winner(self) -> Manager:
-        pass
+        predictions_list = list(self.predictions.values())
+        assert(len(predictions_list) != 0)
+        predictions_list.sort()
+        return predictions_list[0].manager
