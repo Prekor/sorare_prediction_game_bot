@@ -7,8 +7,6 @@ from discord_parser.discord_parser import DiscordParser
 from discord_parser.game_prediction_parser import GamePredictionParser
 from discord_parser.manager_parser import ManagerParser
 
-from prediction_exception import PredictionException
-
 
 class GameWeekPredictionParser(DiscordParser):
 
