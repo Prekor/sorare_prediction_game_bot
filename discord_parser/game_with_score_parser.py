@@ -26,7 +26,7 @@ class GameWithScoreParser:
                 game_with_score = Game(game.home_team, game.away_team, score[0], score[1])
                 game_match = game
                 break
-        assert game_with_score is not None, f"No valid score found in:\n{line}"
+        assert game_with_score is not None, f"There is no matching game in the game week for:\n{line}"
         assert game_match is not None, f"There is no matching game in the game week for:\n{line}"
         return game_with_score, game_match
 
