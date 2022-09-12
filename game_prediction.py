@@ -26,7 +26,11 @@ class GamePrediction(Game):
             return 0
 
     def get_total_goals_diff(self) -> int:
+        if self.game.get_result() == GameResult.CANCELLED:
+            return 0
         return (self.game.home_goals + self.game.away_goals) - (self.home_goals - self.away_goals)
 
     def get_home_goals_diff(self) -> int:
+        if self.game.get_result() == GameResult.CANCELLED:
+            return 0
         return self.game.home_goals - self.home_goals
